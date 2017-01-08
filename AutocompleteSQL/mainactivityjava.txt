@@ -1,0 +1,60 @@
+package com.pooja.autocompletesql;
+
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity {
+    EditText edititem;
+    Button button,button2;
+    AutoCompleteTextView autoCompleteTextView;
+    ArrayList<String> arrayList;
+    DatabaseHelper helper;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        helper=new DatabaseHelper(this);
+        edititem=(EditText)findViewById(R.id.editText);
+        button=(Button)findViewById(R.id.button_add);
+        button2=(Button)findViewById(R.id.btn_view);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(MainActivity.this,Main2Activity.class);
+                startActivity(intent);
+            }
+        });
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                String value=edititem.getText().toString();
+                if(edititem.length()!=0)
+                {
+                    Toast.makeText(MainActivity.this,"Successfully enterer into the database!",Toast.LENGTH_LONG).show();
+                helper.adddata(value);
+                edititem.setText("");}
+                else
+                {
+                    Toast.makeText(MainActivity.this,"Please enter data",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        autoCompleteTextView=(AutoCompleteTextView)findViewById(R.id.autoCompleteTextView);
+        arrayList=new ArrayList<String>();
+        arrayList=helper.getdetailsfromdb();
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1,arrayList);
+        autoCompleteTextView.setThreshold(1);
+        autoCompleteTextView.setAdapter(adapter);
+    }
+}
